@@ -1354,7 +1354,7 @@ uses
   switch_select, wait_message, print_unit, enter_timber,
   calibration_unit, { OT-FIRST pdf_unit,} export_unit, platform_unit, data_memo_unit,
 
-  math2_unit, check_diffs_unit, rail_options_unit, { OT-FIRST file_viewer, chairs_unit,}
+  math2_unit, check_diffs_unit, rail_options_unit, file_viewer, { OT-FIRST chairs_unit,}
   trackbed_unit, create_tandem, xtc_unit;
 
 const

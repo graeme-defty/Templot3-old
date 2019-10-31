@@ -727,7 +727,7 @@ uses
 
   { OT-FIRST dtpGR32,} edit_memo_unit, { OT-FIRST dtp_unit, dtp_settings_unit,} platform_unit,
   data_memo_unit, { OT-FIRST sketchboard_unit,} check_diffs_unit, rail_options_unit,
-  export_unit, { OT-FIRST file_viewer,} wait_message, { OT-FIRST companion_load_unit,}
+  export_unit, file_viewer, wait_message, { OT-FIRST companion_load_unit,}
 
   ActiveX,                 // IMalloc
   ShlObj, trackbed_unit,   // Needed for the CSIDL constants
@@ -4478,33 +4478,24 @@ end;
 procedure Tcontrol_room_form.room_file_viewer_menu_entryClick(Sender: TObject);    // 208d
 
 begin
-  do_open_source_bang('FILE VIEWER');  // OT-FIRST
- { OT-FIRST
   keep_form_was_showing:=False;
   do_show_modal(file_viewer_form);  // 212a
-  }
 end;
 //______________________________________________________________________________
 
 procedure Tcontrol_room_form.viewer_bitmaps_menu_entryClick(Sender:TObject);  // 208e
 
 begin
-  do_open_source_bang('FILE VIEWER');  // OT-FIRST
- { OT-FIRST
   viewer_bitmaps_menu_entry.Checked:=True;  // radio item
   fv_has_been_active:=False;                // force refresh of viewer
-  }
 end;
 //______________________________________________________________________________
 
 procedure Tcontrol_room_form.viewer_png_menu_entryClick(Sender:TObject);  // 208e
 
 begin
-  do_open_source_bang('FILE VIEWER');  // OT-FIRST
- { OT-FIRST
   viewer_png_menu_entry.Checked:=True;  // radio item
   fv_has_been_active:=False;            // force refresh of viewer
-  }
 end;
 //______________________________________________________________________________
 
@@ -4518,10 +4509,7 @@ const
   +'||The screenshot images will then be saved as image files on the disk drive, instead of being stored in memory. Be aware that this option will cause the viewer to work more slowly.';
 
 begin
-  do_open_source_bang('FILE VIEWER');  // OT-FIRST
- { OT-FIRST
   help(0,fvo_help_str,'');
-  }
 end;
 //______________________________________________________________________________
 

@@ -203,7 +203,7 @@ implementation
 uses
   math_unit, alert_unit, control_room, colour_unit, preview_unit, print_unit, calibration_unit,
   stay_visible_unit, grid_unit, jotter_unit, pad_unit, keep_select, chat_unit, entry_sheet, prefs_unit,
-  mint_unit { OT-FIRST , file_viewer} {, docs_unit};
+  mint_unit , file_viewer {, docs_unit};
 
 var
   no_onresize:boolean=False;
@@ -1203,7 +1203,6 @@ begin
 
   if Copy(new_url,1,10)='online_ref'     then begin online_help_click(Copy(new_url,11,3));  EXIT; end;  // 0.93.a
 
-  { OT-FIRST
            // then the file viewer  208d ...
 
   if Copy(new_url,1,9)='fv_reload'
@@ -1263,9 +1262,6 @@ begin
   if new_url='fv_help.85a'               then begin file_viewer_form.help_button.Click;     EXIT; end;   // 209a
 
   if new_url='fv_instant.85a'            then begin file_viewer_form.instant_show_checkbox.Checked:=True;  EXIT; end;   // 209a
-
-  }
-
 
   if new_url='go_to_templot_explained.85a'    then begin go_to_templot_companion_page('templot_explained.php'); EXIT; end;   // 215a
 
