@@ -192,7 +192,7 @@ implementation
 
 uses Printers, control_room, grid_unit, alert_unit, math_unit, calibration_unit,
   bgkeeps_unit, bgnd_unit, print_unit, info_unit, help_sheet,
-  print_settings_unit, { OT-FIRST pdf_unit, dtp_unit, dtp_settings_unit,} export_unit;
+  print_settings_unit, pdf_unit, { OT-FIRST dtp_unit, dtp_settings_unit,} export_unit;
 
 var
   pvsx:extended=1;
@@ -382,8 +382,6 @@ begin
 
   if non_print_output=True                  // 0.91.d
      then begin
-            { OT-FIRST
-
             if output_code=0       // pdf file
                then begin
                       printer_width_dots:=pdf_width_dots;
@@ -410,7 +408,6 @@ begin
                       nom_width_dpi:=metafile_dpi;
                       nom_length_dpi:=nom_width_dpi;
                     end;
-            }
 
             if output_code=3       // track plan as an image file
                then begin
@@ -430,9 +427,7 @@ begin
                       nom_length_dpi:=nom_width_dpi;
                     end;
 
-            { OT-FIRST if (output_code<0) or (output_code>4)}
-
-            if (output_code<3) or (output_code>4)  // OT-FIRST
+            if (output_code<0) or (output_code>4)
                then begin
                       valid_printer_data:=False;
                       EXIT;
@@ -552,8 +547,6 @@ begin
   if non_print_output=True
      then begin
             case output_code of
-
-               { OT-FIRST
                0: begin                          // PDF
 
                     page_margin_top_mm:=6.0;     // 6 mm top trim margin.
@@ -571,6 +564,7 @@ begin
                     bottom_blanking_mm:=print_length/100+5.0;  // no bottom blanking.
                   end;
 
+               { OT-FIRST
              1,2: begin                       // sketchboard   image file, metafile
                     page_margin_top_mm:=0;    // 0.93.a  1-3-2009  no trim margins on sketchboard
                     page_margin_bottom_mm:=0;
@@ -581,7 +575,7 @@ begin
                     right_blanking_mm:=dtp_form.dtp_document.PageHeight+5.0;  // no right blanking (+5 mm arbitrary).
                     bottom_blanking_mm:=dtp_form.dtp_document.PageWidth+5.0;  // no bottom blanking (+5 mm arbitrary).
                   end;
-               }
+                  }
 
                3: begin                       // create image file
                     page_margin_top_mm:=0;    // 0.93.a  28-7-2010  no trim margins on created image files
@@ -1129,6 +1123,9 @@ begin
 
     if calcs_done_and_valid=False then redraw(False);    //  first do a direct redraw if nec to ensure valid calcs.
     if calcs_done_and_valid=False then EXIT;             //  calcs still not valid.
+
+        if page_info(False,no_alerts,non_print_output,output_code)=False     //  read the printer details, get sheet counts and page sizes.
+           then show_modal_message('oh fukkit!!!');
 
     if page_info(False,no_alerts,non_print_output,output_code)=False     //  read the printer details, get sheet counts and page sizes.
        then EXIT;                                                        //  printer driver problem.

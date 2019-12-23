@@ -31,7 +31,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, ComCtrls, ExtDlgs;
+  ExtCtrls, StdCtrls, ComCtrls, ExtDlgs, Utils;
 
 type
 
@@ -179,7 +179,7 @@ var
 implementation
 
 uses ShellAPI, control_room, pad_unit, keep_select, math_unit, preview_unit, entry_sheet, help_sheet,
-     { OT-FIRST dtp_unit, dtp_settings_unit,} alert_unit, grid_unit, { OT-FIRST pdf_unit,} print_settings_unit,colour_unit,
+     { OT-FIRST dtp_unit, dtp_settings_unit,} alert_unit, grid_unit, pdf_unit, print_settings_unit,colour_unit,
 
      bgnd_unit, dxf_unit, image_viewer_unit,
 
@@ -276,24 +276,19 @@ var
   box_value_short:extended;
 
 begin
-
-  do_open_source_bang('EXPORT PDF');  // OT-FIRST
-
-  { OT-FIRST
-
-  if sb_check_valid_int(pdf_dpi_edit,50,4800,box_value_dpi)=False          // input limits 50dpi to 4800dpi
+  if check_int(pdf_dpi_edit.text,50,4800,box_value_dpi)=False          // input limits 50dpi to 4800dpi
      then begin
             ShowMessage('Error: The DPI setting must be a valid whole number in the range 50 to 4800. A decimal point is not allowed.');
             EXIT;
           end;
 
-  if sb_check_valid_float(pdf_long_mm_edit,50,25000,box_value_long)=False   // input limits 50mm to 25000mm (25m)
+  if check_float(pdf_long_mm_edit.text,50,25000,box_value_long)=False   // input limits 50mm to 25000mm (25m)
      then begin
             ShowMessage('Error: The long-side page dimension must be a valid number in the range 50mm to 25000mm.');
             EXIT;
           end;
 
-  if sb_check_valid_float(pdf_short_mm_edit,25,12500,box_value_short)=False  // input limits 25mm to 12500mm (12.5m)
+  if check_float(pdf_short_mm_edit.text,25,12500,box_value_short)=False  // input limits 25mm to 12500mm (12.5m)
      then begin
             ShowMessage('Error: The short-side page dimension must be a valid number in the range 25mm to 12500mm.');
             EXIT;
@@ -337,16 +332,19 @@ begin
   pdf_grey_shade:=export_grey_radiobutton.Checked;
 
 
+
       // ready to go...
 
   if export_control_template_radiobutton.Checked=True
      then begin
+            show_modal_message('Exporting Control Template');
             print_control_template(True);   // True=PDF
             EXIT;
           end;
 
   if export_group_only_radiobutton.Checked=True
      then begin
+            show_modal_message('Exporting Group Only');
             if any_bgnd=0
                then begin
                       alert_no_bgnd;
@@ -367,6 +365,7 @@ begin
 
   if export_all_radiobutton.Checked=True
      then begin
+            show_modal_message('Exporting All');
             if any_bgnd<1
                then begin
                       alert_no_bgnd;
@@ -376,8 +375,6 @@ begin
             print_group_only_flag:=False;
             print_entire_pad(True);        // True=PDF
           end;
-
-}
 
 end;
 //______________________________________________________________________________

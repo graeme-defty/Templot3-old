@@ -1352,7 +1352,7 @@ uses
   print_settings_unit, panning_unit, action_unit, preview_unit, gauge_unit,
   grid_unit, xing_select, jotter_unit, shove_timber, entry_sheet, bgnd_unit,
   switch_select, wait_message, print_unit, enter_timber,
-  calibration_unit, { OT-FIRST pdf_unit,} export_unit, platform_unit, data_memo_unit,
+  calibration_unit, pdf_unit, export_unit, platform_unit, data_memo_unit,
 
   math2_unit, check_diffs_unit, rail_options_unit, { OT-FIRST file_viewer, chairs_unit,}
   trackbed_unit, create_tandem, xtc_unit;
@@ -9383,10 +9383,11 @@ var
   i,kludge_count:integer;
 
 begin
+  show_modal_message('print_control_template');
   if pdf=True then export_form.Hide;
 
   print_form.diagram_mode_radiobutton.Enabled:=False;
-  { OT-FIRST pdf_form.diagram_mode_radiobutton.Enabled:=False;}
+  pdf_form.diagram_mode_radiobutton.Enabled:=False;
 
 try
   if output_diagram_mode=True
@@ -9426,15 +9427,11 @@ try
 
   if pdf=True       // 0.91.d pdf
      then begin
-            do_open_source_bang('PDF CONTROL TEMPLATE');  // OT-FIRST
-
-          { OT-FIRST
             pad_caption('    create  PDF  file  from  the  control  template');
 
             if show_margins=1 then show_margins:=2;   // change page outlines on pad, if showing for printer
 
             pdf_draw;     // go create PDF.
-          }
 
           end
      else begin        // normal print
@@ -9472,7 +9469,7 @@ begin
   if pdf=True then export_form.Hide;
 
   print_form.diagram_mode_radiobutton.Enabled:=True;
-  { OT-FIRST pdf_form.diagram_mode_radiobutton.Enabled:=True;}
+  pdf_form.diagram_mode_radiobutton.Enabled:=True;
 
 try
 
@@ -9499,9 +9496,7 @@ try
 
   if pdf=True       // 0.91.d pdf
      then begin
-            do_open_source_bang('PDF TRACK PLAN');  // OT-FIRST
 
-          { OT-FIRST
             if print_group_only_flag=True
                then pad_caption('    create  PDF  file  from  group  only')
                else pad_caption('    create  PDF  file  from  all  background  templates');
@@ -9509,7 +9504,6 @@ try
             if show_margins=1 then show_margins:=2;   // change page outlines on pad, if showing for printer
 
             pdf_draw;
-          }
 
           end
      else begin        // normal print
