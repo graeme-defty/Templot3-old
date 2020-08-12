@@ -18,7 +18,6 @@ I have a list of things still to do, including:
 
 - minor niggles
  o use LeftStr() to get string prefix
- o eliminate ':= True' all over the place
  o and lots of etc
 
 }
@@ -888,7 +887,7 @@ var
 
       if i = 3 then begin
         // T3-OUT                   folder_str:=pdf_form.pdf_printer.Filename;
-        if OpenDocument(PChar(folder_str)) = False
+        if not OpenDocument(PChar(folder_str))
         // { *Converted from ShellExecute* }<=32
         then
           ShowMessage('Sorry, unable to open the file.')
@@ -898,7 +897,7 @@ var
 
       if i = 4 then begin
         // T3-OUT                   folder_str:=ExtractFilePath(pdf_form.pdf_printer.Filename);
-        if OpenDocument(PChar(folder_str)) = False
+        if not OpenDocument(PChar(folder_str))
         // { *Converted from ShellExecute* }<=32
         then
           ShowMessage('Sorry, unable to open the folder.')
@@ -1126,8 +1125,7 @@ var
               if num_str = '' then
                 CONTINUE;              // no string available??
 
-              if
-              (pad_form.timber_numbering_on_plain_track_menu_entry.Checked = False)   // 208a
+              if (not pad_form.timber_numbering_on_plain_track_menu_entry.Checked)   // 208a
                 and (num_str <> 'A1')
               then begin
                 s := Copy(num_str, 1, 1);
@@ -1323,7 +1321,7 @@ var
     now: integer;
 
   begin
-    if ((plain_track = False) or (aq = 0) or (aq = 8) or (aq = 3) or
+    if ((not plain_track) or (aq = 0) or (aq = 8) or (aq = 3) or
       (aq = 11) or ((aq > 15) and (aq < 24))) and aqyn[aq] then begin
       with pdf_page do begin
 
@@ -1421,12 +1419,12 @@ var
 
       aq := rail;  // gauge-faces.
 
-      if ((plain_track = False) or (aq = 0) or (aq = 3) or ((aq > 15) and (aq < 24)))
+      if ((not plain_track) or (aq = 0) or (aq = 3) or ((aq > 15) and (aq < 24)))
 
       // if plain track, stock rails and adjacent tracks only.
 
       then begin
-        if (aqyn[aq] = False) or (aqyn[aq + outer_add] = False)
+        if not (aqyn[aq] and aqyn[aq + outer_add])
         // data not for both edges?
         then begin
           if aqyn[aq] then
@@ -1438,7 +1436,7 @@ var
 
         now_max := nlmax_array[aq];
 
-        if gaunt = False    // 0.93.a normal turnout.
+        if not gaunt    // 0.93.a normal turnout.
         then begin
 
           case aq of
@@ -1604,8 +1602,8 @@ var
           // remove polygon line across end of planing (not for fixed-diamond)..
           // (for gaunt template this removes the polygon line across the rail end)
 
-          if ((half_diamond = False) or (fixed_diamond = False)) and
-            ((rail = 1) or (rail = 2)) then
+          if (not (half_diamond and fixed_diamond)) and
+            (rail in [1, 2]) then
             modify_rail_end(0, dots_index, edge_colour, blanking_colour);
 
           // remove polygon lines across stock rail ends...
@@ -1627,34 +1625,34 @@ var
             // 0.93.a blank platform rear edges ...
 
             if (rail = 16) and draw_ts_platform and
-              (draw_ts_platform_rear_edge = False)   // 0.93.a TS platform start
+              (not draw_ts_platform_rear_edge)   // 0.93.a TS platform start
             then
               draw_outline_railedge(16, blanking_colour);    // blank rear edge
 
             if (rail = 20) and draw_ms_platform and
-              (draw_ms_platform_rear_edge = False)   // 0.93.a TS platform start
+              (not draw_ms_platform_rear_edge)   // 0.93.a TS platform start
             then
               draw_outline_railedge(20, blanking_colour);    // blank rear edge
 
             // 0.93.a blank platform ends ...
 
             if (rail = 16) and draw_ts_platform and
-              (draw_ts_platform_start_edge = False)   // 0.93.a TS platform start
+              (not draw_ts_platform_start_edge)   // 0.93.a TS platform start
             then
               modify_rail_end(0, dots_index, edge_colour, blanking_colour);
 
             if (rail = 16) and draw_ts_platform and
-              (draw_ts_platform_end_edge = False)     // 0.93.a TS platform end
+              (not draw_ts_platform_end_edge)     // 0.93.a TS platform end
             then
               modify_rail_end(mid_dots_index, mid_dots_index + 1, edge_colour, blanking_colour);
 
             if (rail = 20) and draw_ms_platform and
-              (draw_ms_platform_start_edge = False)   // 0.93.a MS platform start
+              (not draw_ms_platform_start_edge)   // 0.93.a MS platform start
             then
               modify_rail_end(0, dots_index, edge_colour, blanking_colour);
 
             if (rail = 20) and draw_ms_platform and
-              (draw_ms_platform_end_edge = False)     // 0.93.a MS platform end
+              (not draw_ms_platform_end_edge)     // 0.93.a MS platform end
             then
               modify_rail_end(mid_dots_index, mid_dots_index + 1, edge_colour, blanking_colour);
 
@@ -1735,8 +1733,7 @@ var
     if plain_track then
       EXIT;   // not if plain track.
 
-    if (aqyn[4] = False) or (aqyn[5] = False) or (aqyn[12] = False) or
-      (aqyn[13] = False)            // not enough data for filled vee.
+    if (not (aqyn[4] and aqyn[5] and aqyn[12]and aqyn[13])) // not enough data for filled vee.
       or (nlmax_array[4] = 0) or (nlmax_array[5] = 0) or (nlmax_array[12] = 0) or
       (nlmax_array[13] = 0) then begin
       if aqyn[4] then
@@ -1922,7 +1919,7 @@ var
   procedure outline_railends;       // draw the rail ends in outline mode.
 
   begin
-    if {(railend_marks=True) and} (plain_track = False) then
+    if not plain_track then
     begin                                       // mark rail-ends...
 
       mark_end(1, 1, 9, 1);    // turnout rail wing rail finish.
@@ -1975,7 +1972,7 @@ begin
       '_pages_' + FormatDateTime('yyyy_mm_dd_hhmm_ss', Date + Time)) + '.pdf';
     Title := '    save  PDF  file  as ...';
 
-    if Execute = False then
+    if not Execute then
       EXIT;
 
     his_pdf_file_name := FileName;        // so we can use the same folder next time.
@@ -1987,7 +1984,7 @@ begin
 
     if FileExists(file_str)    // 217b
     then begin
-      if DeleteFile(file_str) = False then begin
+      if not DeleteFile(file_str) then begin
         ShowMessage('Error:' + #13 + #13 + 'The PDF file "' +
           ExtractFileName(file_str) + '" cannot be created ' +
           #13 + 'because a file having the same name is currently in use '
@@ -2027,12 +2024,12 @@ begin
     printer_printing := False;             // init for new job.
     pdf_form.in_progress_label.Hide;
 
-    if calcs_done_and_valid = False then
+    if not calcs_done_and_valid then
       redraw(False);    //  first do a direct redraw if nec to ensure valid calcs.
-    if calcs_done_and_valid = False then
+    if not calcs_done_and_valid then
       EXIT;             //  calcs still not valid.
 
-    if print_preview(False, True, 0) = False
+    if not print_preview(False, True, 0)
     // calc the sheet sizes from the printer and preview the output.
     then
       EXIT;                         // (also gets ypd y datum offset).
@@ -2157,11 +2154,11 @@ begin
           else begin
             bottom_str := ' ref :  ' + current_name_str + '    ' + info_form.gauge_label.Caption;
 
-            if plain_track = False then
+            if not plain_track then
               bottom_str := bottom_str + xing_str;
 
             if (ABS(nomrad) < max_rad_test) or spiral then begin
-              if spiral = False then
+              if not spiral then
                 bottom_str := bottom_str + '    curved onto ' + round_str(nomrad, 0) + ' mm radius'
               else
                 bottom_str := bottom_str + '    spiral transition curve';
@@ -2186,7 +2183,7 @@ begin
           pdf_form.ok_button.Caption := '&create  page  ' + temp_str;
           pdf_form.omit_page_button.Caption := '&omit  page  ' + temp_str;
 
-          if all_pages = False then begin
+          if not all_pages then begin
             //                  show_modal_message('--- NOT ALL_PAGES ---');
             button_clicked := False;
             banner_changed := False;
@@ -2194,12 +2191,12 @@ begin
             pdf_form.Show;//Modal;
             pdf_form.BringToFront;
 
-            if Application.Terminated = False then
+            if not Application.Terminated then
               Application.ProcessMessages; // otherwise first red outline doesn't show properly.
             outline_in_red(sheet_down, sheet_across); // show which sheet we mean.
 
             repeat
-              if Application.Terminated = False then
+              if not Application.Terminated then
                 Application.ProcessMessages
               else
                 BREAK;
@@ -2207,7 +2204,7 @@ begin
 
             disable_buttons;
 
-            if Application.Terminated = False then
+            if not Application.Terminated then
               Application.ProcessMessages;
 
             case pdf_form.ModalResult of
@@ -2230,7 +2227,7 @@ begin
                 pdf_form.omit_all_panel.Caption :=
                   'omit  all  remaining  pages    F12     ';  // 223d
 
-                if preview_record_file_made = False   // 214b   first page only
+                if not preview_record_file_made   // 214b   first page only
                 then begin
                   make_pdf_preview_screenshot;
                   preview_record_file_made := True;
@@ -2261,7 +2258,7 @@ begin
                 pdf_form.in_progress_label.Show;
                 pdf_form.page_panel.Caption := 'preparing  pages';
 
-                if preview_record_file_made = False   // 214b   first page only
+                if not preview_record_file_made   // 214b   first page only
                 then begin
                   make_pdf_preview_screenshot;
                   preview_record_file_made := True;
@@ -2285,7 +2282,7 @@ begin
           end
           else begin                       // all pages
             //             show_modal_message('--- ALL PAGES ---');
-            if Application.Terminated = False then
+            if not Application.Terminated then
               Application.ProcessMessages;
 
             if pdf_form.ModalResult = mrCancel   // he's aborted all pages on F12 or Esc
@@ -2295,7 +2292,7 @@ begin
               EXIT;
             end;
 
-            if preview_record_file_made = False   // 214b   first page only
+            if not preview_record_file_made   // 214b   first page only
             then begin
               make_pdf_preview_screenshot;
               preview_record_file_made := True;
@@ -2363,8 +2360,8 @@ begin
             //  control template - draw timbers and all marks except rail joints...
             //###
 
-            if (print_entire_pad_flag = False) // control template
-              and (output_diagram_mode = False)   // 0.93.a  no control template if diagram mode
+            if (not print_entire_pad_flag) // control template
+              and (not output_diagram_mode)   // 0.93.a  no control template if diagram mode
               and (turnoutx > 0)                  // not if invalidated
 
             // 0.93.a if printing background templates in Quick mode, the control template has been put on the background
@@ -2379,7 +2376,7 @@ begin
 
               if {pad_form.print_track_centre_lines_menu_entry.Checked=True}  // 0.82.b
               (print_settings_form.output_centrelines_checkbox.Checked and
-                (dummy_template = False))       // 212a
+                (not dummy_template))       // 212a
                 or (print_settings_form.output_bgnd_shapes_checkbox.Checked and
                 dummy_template) then begin
 
@@ -2395,7 +2392,7 @@ begin
                 end;
 
                 for aq := 24 to 25 do begin
-                  if ((plain_track = False) or (aq = 24)) and aqyn[aq]
+                  if ((not plain_track) or (aq = 24)) and aqyn[aq]
                   // main side only only if plain track, and data available ?
                   then begin
                     move_to.X := get_w_dots(aq, 0);
@@ -2424,15 +2421,15 @@ begin
 
                   for aq := 0 to 23 do begin
                     // 24, 25 centre-lines already done.
-                    if (adjacent_edges = False) and (aq > 15) then
+                    if (not adjacent_edges) and (aq > 15) then
                       CONTINUE;  // no adjacent tracks in output  // 206b
 
                     case aq of     // 223d
                       16, 17, 20, 21:
-                        if print_settings_form.output_platforms_checkbox.Checked = False then
+                        if not print_settings_form.output_platforms_checkbox.Checked then
                           CONTINUE;         // platforms not wanted
                       18, 19, 22, 23:
-                        if print_settings_form.output_trackbed_edges_checkbox.Checked = False then
+                        if not print_settings_form.output_trackbed_edges_checkbox.Checked then
                           CONTINUE;    // trackbed edges not wanted
                     end;//case
 
@@ -2484,8 +2481,8 @@ begin
 
                   // finally draw in or overdraw the planing gauge-faces - (no infill) ...
                   aq := 1;
-                  if (plain_track = False) and
-                    (gaunt = False) and aqyn[1] and (list_planing_mark_aq1 > 0)
+                  if (not plain_track) and
+                    (not gaunt) and aqyn[1] and (list_planing_mark_aq1 > 0)
                   {and (drawn_full_aq1=False)}// not if already drawn.
                   then begin
                     move_to.X := get_w_dots(aq, 0);
@@ -2501,8 +2498,8 @@ begin
                   end;
 
                   aq := 2;
-                  if (plain_track = False) and
-                    (gaunt = False) and aqyn[2] and (list_planing_mark_aq2 > 0)
+                  if (not plain_track) and
+                    (not gaunt) and aqyn[2] and (list_planing_mark_aq2 > 0)
                   {and (drawn_full_aq2=False)}// not if already drawn.
                   then begin
                     move_to.X := get_w_dots(aq, 0);
@@ -2582,7 +2579,7 @@ begin
 
             if {(banner_paper=False) and (} sheet_down < sheet_co_long {)} then
             begin
-              if sheet[sheet_down + 1, sheet_across].empty = False
+              if not sheet[sheet_down + 1, sheet_across].empty
               // something on next page down ?
               then begin
                 move_to.X := left_blanking_dots;
@@ -3226,7 +3223,7 @@ var
   // T3-OUT  rotated_emf:TMetafile;
 
 begin
-  if print_settings_form.output_bgnd_shapes_checkbox.Checked = False then
+  if not print_settings_form.output_bgnd_shapes_checkbox.Checked then
     EXIT;
 
   maxbg_index := bgnd_form.bgnd_shapes_listbox.Items.Count - 1;
@@ -3458,11 +3455,11 @@ begin
                 end;//include pictures
 
                 if pdf_form.picture_borders_checkbox.Checked or
-                  (pdf_form.include_pictures_checkbox.Checked = False)
+                  (not pdf_form.include_pictures_checkbox.Checked)
                 // or (pdf_form.picture_outlines_radio.Checked=True)
                 then begin
-                  if pdf_form.include_pictures_checkbox.Checked =
-                    True {pdf_form.picture_outlines_radio.Checked=False}
+                  if pdf_form.include_pictures_checkbox.Checked
+                    {pdf_form.picture_outlines_radio.Checked=False}
                   then
                     Pen.Width := mm_to_dots(printpicborder_wide);    // picture borders thinner unless an outline only.
                   Pen.Color := printshape_colour;
@@ -3472,8 +3469,8 @@ begin
                     move_to.Y, line_to.X, line_to.Y);
                 end;
 
-                if pdf_form.include_pictures_checkbox.Checked =
-                  False   // pdf_form.picture_outlines_radio.Checked=True
+                if not pdf_form.include_pictures_checkbox.Checked
+                          // pdf_form.picture_outlines_radio.Checked=True
                 then begin
                   MoveTo(move_to.X, move_to.Y);
                   LineTo(line_to.X, line_to.Y);  // printing picture outlines only - draw diagonal line.
@@ -3625,10 +3622,10 @@ begin
 
     for n := 0 to maxbg_index do begin
 
-      if Ttemplate(keeps_list.Objects[n]).bg_copied = False then
+      if not Ttemplate(keeps_list.Objects[n]).bg_copied then
         CONTINUE;  // no data, not on background.
 
-      if (Ttemplate(keeps_list.Objects[n]).group_selected = False) and
+      if (not Ttemplate(keeps_list.Objects[n]).group_selected) and
         print_group_only_flag then
         CONTINUE;  // not in group. 0.78.b 10-12-02.
 
@@ -3650,14 +3647,14 @@ begin
 
           if use_print_mapping_colour and
             ((mapping_colours_print = 2) or (mapping_colours_print = 3)) and
-            (pdf_black_white = False) and (pdf_grey_shade = False) then begin
+            (not pdf_black_white) and (not pdf_grey_shade) then begin
             mapping_colour := calc_intensity(print_mapping_colour);
             using_mapping_colour := True;
           end;
 
           if use_pad_marker_colour and
             (mapping_colours_print = 4)   // use pad settings instead
-            and (pdf_black_white = False) and (pdf_grey_shade = False)
+            and (not pdf_black_white) and (not pdf_grey_shade)
           then
           begin
             mapping_colour := calc_intensity(pad_marker_colour);
@@ -3869,8 +3866,8 @@ begin
               if num_str = '' then
                 CONTINUE;              // no string available??
 
-              if pad_form.timber_numbering_on_plain_track_menu_entry.Checked =
-                False   // 208a
+              if not pad_form.timber_numbering_on_plain_track_menu_entry.Checked
+                        // 208a
               then begin
                 s := Copy(num_str, 1, 1);
 
@@ -4033,14 +4030,14 @@ var
         EXIT;
       end;
 
-      if using_mapping_colour and ((pdf_form.black_edges_checkbox.Checked = False) or
-        (rail_edges = False)) then begin
+      if using_mapping_colour and ((not pdf_form.black_edges_checkbox.Checked) or
+        (not rail_edges)) then begin
         set_pen_colour(mapping_colour);
         EXIT;
       end;
 
-      if (mapping_colours_print < 0) and ((pdf_form.black_edges_checkbox.Checked = False) or
-        (rail_edges = False))
+      if (mapping_colours_print < 0) and ((not pdf_form.black_edges_checkbox.Checked) or
+        (not rail_edges))
       // 0=normal, 1=rails only, 2=timbers only, 3=rails and timber outlines, 4:=use the PAD colour instead, -1=single colour.
       then begin
         set_pen_colour(printbg_single_colour);
@@ -4090,7 +4087,7 @@ var
         EXIT;
     end;
 
-    if using_mapping_colour and (pdf_form.black_edges_checkbox.Checked = False) then begin  // mapping colour
+    if using_mapping_colour and (not pdf_form.black_edges_checkbox.Checked) then begin  // mapping colour
       lsRail.colour := mapping_colour;
       lsPlatform.colour := mapping_colour;
       lsBlanking.colour := mapping_colour;
@@ -4098,7 +4095,7 @@ var
       EXIT;
     end;
 
-    if (mapping_colours_print < 0) and (pdf_form.black_edges_checkbox.Checked = False)
+    if (mapping_colours_print < 0) and (not pdf_form.black_edges_checkbox.Checked)
     // 0=normal, 1=rails only, 2=timbers only, 3=rails and timber outlines, 4:=use the PAD colour instead, -1=single colour.
     then begin                          // single colour
       lsRail.colour := printbg_single_colour;
@@ -4277,7 +4274,7 @@ var
 
       now_max := intarray_max(list_bgnd_rails[aq, 0]);
 
-      if gaunt_template = False then begin
+      if not gaunt_template then begin
 
         case aq of
           1: begin
@@ -4458,7 +4455,7 @@ var
           //      // remove polygon line across end of planing (not for fixed-diamond)..
           //      // (for gaunt template this removes the polygon line across the rail end)
 
-          if (fixed_diamond_ends = False) and ((rail = 1) or (rail = 2)) then
+          if (not fixed_diamond_ends) and ((rail = 1) or (rail = 2)) then
             pbg_modify_rail_end(0, dots_index, edge_colour, blanking_colour);
 
           // remove polygon lines across stock rail ends...
@@ -4483,13 +4480,13 @@ var
               // 0.93.a blank platform rear edges ...
 
               if (rail = 16) and
-                draw_ts_platform_keep and (draw_ts_platform_rear_edge_keep = False)
+                draw_ts_platform_keep and (not draw_ts_platform_rear_edge_keep)
               // 0.93.a TS platform start
               then
                 pbg_outline_railedge(16, blanking_colour, True);     // blank rear edge
 
               if (rail = 20) and
-                draw_ms_platform_keep and (draw_ms_platform_rear_edge_keep = False)
+                draw_ms_platform_keep and (not draw_ms_platform_rear_edge_keep)
               // 0.93.a TS platform start
               then
                 pbg_outline_railedge(20, blanking_colour, True);     // blank rear edge
@@ -4497,25 +4494,25 @@ var
               // 0.93.a blank platform ends ...
 
               if (rail = 16) and
-                draw_ts_platform_keep and (draw_ts_platform_start_edge_keep = False)
+                draw_ts_platform_keep and (not draw_ts_platform_start_edge_keep)
               // 0.93.a TS platform start
               then
                 pbg_modify_rail_end(0, dots_index, edge_colour, blanking_colour);
 
               if (rail = 16) and
-                draw_ts_platform_keep and (draw_ts_platform_end_edge_keep = False)
+                draw_ts_platform_keep and (not draw_ts_platform_end_edge_keep)
               // 0.93.a TS platform end
               then
                 pbg_modify_rail_end(mid_dots_index, mid_dots_index + 1, edge_colour, blanking_colour);
 
               if (rail = 20) and
-                draw_ms_platform_keep and (draw_ms_platform_start_edge_keep = False)
+                draw_ms_platform_keep and (not draw_ms_platform_start_edge_keep)
               // 0.93.a MS platform start
               then
                 pbg_modify_rail_end(0, dots_index, edge_colour, blanking_colour);
 
               if (rail = 20) and
-                draw_ms_platform_keep and (draw_ms_platform_end_edge_keep = False)
+                draw_ms_platform_keep and (not draw_ms_platform_end_edge_keep)
               // 0.93.a MS platform end
               then
                 pbg_modify_rail_end(mid_dots_index, mid_dots_index + 1, edge_colour, blanking_colour);
@@ -4853,7 +4850,7 @@ var
     ms_mid_dots_index, ts_mid_dots_index: integer;
     edge_colour, blanking_colour: integer;
 
-    no_vee: boolean;
+    omitting_vee: boolean;
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -4889,9 +4886,9 @@ var
       if (intarray_max(list_bgnd_rails[4, 0]) = 0) or (intarray_max(list_bgnd_rails[5, 0]) = 0)
       // no data for vee rails
       then
-        no_vee := True
+        omitting_vee := True
       else
-        no_vee := False;
+        omitting_vee := False;
 
       dots_index := 0 - 1;                    // first increment is to zero.
 
@@ -4919,7 +4916,7 @@ var
 
       ms_mid_dots_index := dots_index;
 
-      if no_vee = False then begin
+      if not omitting_vee then begin
         now_max := intarray_max(list_bgnd_rails[4, 0]);    // point rail
         edge_started := False;
 
@@ -5030,7 +5027,7 @@ var
 
           // blank out template boundaries...
 
-          if output_include_boundaries = False then begin
+          if not output_include_boundaries then begin
             edge_colour := current_pen_colour;  // existing rail edges.
             //
             //          if Brush.Style=bsSolid then blanking_colour:=Brush.Color   // infill colour.
@@ -5043,7 +5040,7 @@ var
             pbg_modify_boundary(ms_mid_dots_index, ms_mid_dots_index + 1,
               edge_colour, blanking_colour);  // exit end (turnout) or Ctrl-1 end (plain track).
 
-            if no_vee = False then
+            if not omitting_vee then
               pbg_modify_boundary(ts_mid_dots_index, ts_mid_dots_index + 1, edge_colour, blanking_colour);
             // turnout road end.
           end;
@@ -5052,9 +5049,9 @@ var
         if output_show_points_mark  // mark position of points
         then begin
 
-          if (Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.box_dims1.turnout_info1.plain_track_flag = False)   // not for plain track
-            and (Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.turnout_info2.semi_diamond_flag = False)            // not for half-diamond
-            and (Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.turnout_info2.gaunt_flag = False)                   // not for gaunt turnout
+          if (not Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.box_dims1.turnout_info1.plain_track_flag)   // not for plain track
+            and (not Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.turnout_info2.semi_diamond_flag)            // not for half-diamond
+            and (not Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.turnout_info2.gaunt_flag)                   // not for gaunt turnout
 
             and (intarray_max(list_bgnd_rails[1, 0]) <> 0)    // data for straight switch rail
             and (intarray_max(list_bgnd_rails[2, 0]) <> 0)    // data for curved stock rail
@@ -5096,7 +5093,7 @@ begin          // print background templates...
   if max_list_index < 0 then
     EXIT;  // no templates in box.
 
-  if output_diagram_mode = False then
+  if not output_diagram_mode then
     pdf_bgnd_marks(grid_left, grid_top, max_list_index, False, pdf_page);
   // 0.91.d if // first print all the background timbering and marks except rail joints.
 
@@ -5108,18 +5105,16 @@ begin          // print background templates...
 
     for n := 0 to max_list_index do begin         // step through templates
       this_template := Ttemplate(keeps_list.Objects[n]);
-      //if Ttemplate(keeps_list.Objects[n]).bg_copied = False then
       if not this_template.bg_copied then
         CONTINUE;  // no data, not on background.
 
-      //if (Ttemplate(keeps_list.Objects[n]).group_selected = False) and
       if (not this_template.group_selected) and
         print_group_only_flag then
         CONTINUE;  // not in group. 0.78.b 10-12-02.
 
       //if (Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.box_dims1.fb_kludge_template_code > 0)  // 209c
       if (this_template.template_info.keep_dims.box_dims1.fb_kludge_template_code > 0)  // 209c
-        and (print_settings_form.output_fb_foot_lines_checkbox.Checked = False) then
+        and (not print_settings_form.output_fb_foot_lines_checkbox.Checked) then
         CONTINUE;                                                      // foot lines not wanted.
 
       this_one_platforms_trackbed :=
@@ -5160,14 +5155,14 @@ begin          // print background templates...
 
           if box_dims1.use_print_mapping_colour and
             ((mapping_colours_print = 1) or (mapping_colours_print = 3)) and
-            (pdf_black_white = False) and (pdf_grey_shade = False) then begin
+            (not pdf_black_white) and (not pdf_grey_shade) then begin
             mapping_colour := calc_intensity(box_dims1.print_mapping_colour);
             using_mapping_colour := True;
           end;
 
           if box_dims1.use_pad_marker_colour and
             (mapping_colours_print = 4)   // use pad settings instead
-            and (pdf_black_white = False) and (pdf_grey_shade = False)
+            and (not pdf_black_white) and (not pdf_grey_shade)
           then
           begin
             mapping_colour := calc_intensity(box_dims1.pad_marker_colour);
@@ -5184,7 +5179,7 @@ begin          // print background templates...
               pbg_draw_diagram_mode;  // first draw template in diagrammatic mode.
 
             if (print_settings_form.output_centrelines_checkbox.Checked and
-              (output_diagram_mode = False) and (box_dims1.align_info.dummy_template_flag = False))
+              (not output_diagram_mode) and (not box_dims1.align_info.dummy_template_flag))
               or (print_settings_form.output_bgnd_shapes_checkbox.Checked and
                   box_dims1.align_info.dummy_template_flag)  // 212a dummy templates not part of track plan
 
@@ -5245,7 +5240,7 @@ begin          // print background templates...
 //          set_pen_style(psSolid);
           if (rail_infill_i =
             0)  // out for pdf, was  or ((scale*out_factor)<0.75)   // less than 18.75% for 4mm scale (control template) (10.71% for 7mm).
-            and (output_diagram_mode = False) then
+            and (not output_diagram_mode) then
           begin           //  outline (pen) mode ...
             //  n.b. this mode does not automatically close the rail-ends.
             //  no infill for platforms
@@ -5258,15 +5253,15 @@ begin          // print background templates...
 
             for aq := 0 to 23 do begin
               // 24, 25 centre-lines already done.
-              if (this_one_platforms_trackbed = False) and (aq > 15) then
+              if (not this_one_platforms_trackbed) and (aq > 15) then
                 CONTINUE;  // no adjacent tracks in output  // 206b
 
               case aq of     // 223d
                 16, 17, 20, 21:
-                  if print_settings_form.output_platforms_checkbox.Checked = False then
+                  if not print_settings_form.output_platforms_checkbox.Checked then
                     CONTINUE;         // platforms not wanted
                 18, 19, 22, 23:
-                  if print_settings_form.output_trackbed_edges_checkbox.Checked = False then
+                  if not print_settings_form.output_trackbed_edges_checkbox.Checked then
                     CONTINUE;    // trackbed edges not wanted
               end;//case
 
@@ -5282,7 +5277,7 @@ begin          // print background templates...
           else begin      // infill (polygon) mode ...
             // do blades first - neater result.
 
-            if output_diagram_mode = False // detail mode only
+            if not output_diagram_mode // detail mode only
             then begin
 
               for rail := 1 to 3 do
@@ -5312,12 +5307,12 @@ begin          // print background templates...
                 end;//case
                 rail := rail + 2;
                 if output_diagram_mode and
-                  (output_include_trackbed_edges = False) and ((rail = 18) or (rail = 22)) then
+                  (not output_include_trackbed_edges) and ((rail = 18) or (rail = 22)) then
                   rail := rail + 2;  // 206b no trackbed/cess in diagram mode
               until rail > 22;
             end;
 
-            if output_diagram_mode = False // detail mode only
+            if not output_diagram_mode // detail mode only
             then begin
 
               rail := 26;
@@ -5384,7 +5379,7 @@ begin          // print background templates...
   // finally add the rail-joint marks over the rail infill...   // 209c moved outside loop
 
   if print_settings_form.output_rails_checkbox.Checked and
-    (output_diagram_mode = False) then
+    (not output_diagram_mode) then
     pdf_bgnd_marks(grid_left, grid_top, max_list_index, True, pdf_page);
 
 end;
@@ -5425,7 +5420,7 @@ begin
     'choose  a  new  font  and  text  colour  for  the  preview  page  labels',
     preview_form.Font, True));
 
-  if printer_printing = False then
+  if not printer_printing then
     print_preview(True, True, 0);  // redraw in new font.
 end;
 //__________________________________________________________________________________________
@@ -5441,7 +5436,7 @@ end;
 procedure Tpdf_form.FormResize(Sender: TObject);
 
 begin
-  if Showing and initdone_flag and (form_scaling = False)
+  if Showing and initdone_flag and (not form_scaling)
   //  otherwise clobbers Windows on startup or quit.
   then
     ScrollInView(all_button);
